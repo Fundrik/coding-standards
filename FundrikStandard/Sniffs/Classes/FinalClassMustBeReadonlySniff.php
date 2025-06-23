@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FundrikStandard\Sniffs\Classes;
 
+use FundrikStandard\FullyQualifiedNameTrait;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
@@ -13,12 +14,11 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  * unless it extends a class from an excluded list (e.g., Throwable or PHPUnit constraints)
  * or the class itself is in an excluded list.
  *
- * @property array<string> $excludedParentClasses List of fully qualified class names to exclude from readonly check.
- * @property array<string> $excludedClasses List of fully qualified class names of classes excluded from readonly check.
- *
  * @since 1.0.0
  */
 final class FinalClassMustBeReadonlySniff implements Sniff {
+
+	use FullyQualifiedNameTrait;
 
 	// phpcs:disable WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 	/**
@@ -150,124 +150,6 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 			$stack_ptr,
 			'FinalClassNotReadonly',
 		);
-	}
-
-	/**
-	 * Resolves the fully qualified name of a class based on use statements and current namespace.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param File $phpcs_file The current file being scanned.
-	 * @param int $ptr Pointer to the T_STRING token of the class name.
-	 *
-	 * @return string Fully qualified class name.
-	 */
-	private function resolve_fully_qualified_name( File $phpcs_file, int $ptr ): string {
-
-		$tokens = $phpcs_file->getTokens();
-		$class_name = $tokens[ $ptr ]['content'];
-
-		$use_statements = $this->get_use_statements( $phpcs_file );
-
-		if ( isset( $use_statements[ $class_name ] ) ) {
-			return $use_statements[ $class_name ];
-		}
-
-		$namespace = $this->get_current_namespace( $phpcs_file );
-
-		if ( $namespace !== '' ) {
-			return $namespace . '\\' . $class_name;
-		}
-
-		return $class_name;
-	}
-
-	/**
-	 * Parses the file and returns a map of imported class names (via `use`) to their FQCNs.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param File $phpcs_file The current file being scanned.
-	 *
-	 * @return array<string, string> Map of alias => fully qualified class name.
-	 */
-	private function get_use_statements( File $phpcs_file ): array {
-
-		$tokens = $phpcs_file->getTokens();
-		$uses = [];
-		$token_count = count( $tokens );
-
-		for ( $i = 0; $i < $token_count; $i++ ) {
-
-			if ( $tokens[ $i ]['code'] !== T_USE ) {
-				continue;
-			}
-
-			$end = $phpcs_file->findEndOfStatement( $i );
-			$fqcn = '';
-			$alias = '';
-			$as_found = false;
-
-			for ( $j = $i + 1; $j < $end; $j++ ) {
-
-				if ( $tokens[ $j ]['code'] === T_STRING || $tokens[ $j ]['code'] === T_NS_SEPARATOR ) {
-
-					if ( ! $as_found ) {
-						$fqcn .= $tokens[ $j ]['content'];
-					} else {
-						$alias .= $tokens[ $j ]['content'];
-					}
-				}
-
-				if ( $tokens[ $j ]['code'] !== T_AS ) {
-					continue;
-				}
-
-				$as_found = true;
-			}
-
-			if ( $fqcn === '' ) {
-				continue;
-			}
-
-			$key = $alias !== '' ? $alias : basename( str_replace( '\\', '/', $fqcn ) );
-			$uses[ $key ] = $fqcn;
-		}
-
-		return $uses;
-	}
-
-	/**
-	 * Returns the namespace of the currently scanned file.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param File $phpcs_file The current file being scanned.
-	 *
-	 * @return string Fully qualified namespace (without leading backslash).
-	 */
-	private function get_current_namespace( File $phpcs_file ): string {
-
-		$tokens = $phpcs_file->getTokens();
-		$namespace = '';
-
-		foreach ( $tokens as $ptr => $token ) {
-
-			if ( $token['code'] === T_NAMESPACE ) {
-				$namespace_parts = [];
-				$next = $phpcs_file->findNext( [ T_STRING, T_NS_SEPARATOR ], $ptr + 1, null, false, null, true );
-
-				while ( $next !== false && in_array( $tokens[ $next ]['code'], [ T_STRING, T_NS_SEPARATOR ], true ) ) {
-					$namespace_parts[] = $tokens[ $next ]['content'];
-					++$next;
-				}
-
-				$namespace = implode( '', $namespace_parts );
-				break;
-			}
-		}
-
-		return $namespace;
 	}
 }
 // phpcs:enable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint, SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint

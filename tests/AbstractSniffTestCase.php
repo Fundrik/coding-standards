@@ -79,7 +79,6 @@ abstract class AbstractSniffTestCase extends TestCase {
 		$codes_found = [];
 
 		foreach ( $errors[ $line ] as $col_errors ) {
-
 			foreach ( $col_errors as $error ) {
 
 				$codes_found[] = $error['source'];

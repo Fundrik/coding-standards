@@ -8,8 +8,9 @@
 
 	<description>Fundrik coding standards</description>
 
-	<rule ref="FundrikStandard.Functions.FunctionBodyEmptyLineBefore"/>
 	<rule ref="FundrikStandard.Classes.FinalClassMustBeReadonly"/>
+	<rule ref="FundrikStandard.Classes.RequireAbstractOrFinal"/>
+	<rule ref="FundrikStandard.Functions.FunctionBodyEmptyLineBefore"/>
 
 	<rule ref="SlevomatCodingStandard.Arrays.ArrayAccess"/>
 	<rule ref="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
@@ -42,7 +43,6 @@
 	<rule ref="SlevomatCodingStandard.Classes.ParentCallSpacing"/>
 	<rule ref="SlevomatCodingStandard.Classes.PropertyDeclaration"/>
 	<rule ref="SlevomatCodingStandard.Classes.PropertySpacing"/>
-	<rule ref="SlevomatCodingStandard.Classes.RequireAbstractOrFinal"/>
 	<rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion"/>
 	<rule ref="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>
 	<rule ref="SlevomatCodingStandard.Classes.RequireSelfReference"/>
@@ -77,9 +77,9 @@
 			</property>
 
 			<property name="groups" type="array">
-				<element value="enum cases"/>
 				<element value="uses"/>
 				<element value="public constants, constants"/>
+				<element value="enum cases"/>
 				<element value="public properties, properties"/>
 				<element value="constructor, static constructors"/>
 				<element value="phpunit setup"/>
