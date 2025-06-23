@@ -24,4 +24,10 @@ final class FinalClassMustBeReadonlySniffTest extends AbstractSniffTestCase {
 
 		$this->assert_sniff_error_code( 7, 'FundrikStandard.Classes.FinalClassMustBeReadonly.FinalClassNotReadonly' );
 	}
+
+	#[Test]
+	public function does_not_report_final_readonly_class(): void {
+
+		$this->assert_sniff_ok( 13 );
+	}
 }

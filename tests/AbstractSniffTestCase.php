@@ -79,6 +79,7 @@ abstract class AbstractSniffTestCase extends TestCase {
 		$codes_found = [];
 
 		foreach ( $errors[ $line ] as $col_errors ) {
+
 			foreach ( $col_errors as $error ) {
 
 				$codes_found[] = $error['source'];
@@ -97,6 +98,30 @@ abstract class AbstractSniffTestCase extends TestCase {
 			$found,
 			"Expected error code '{$expected_code}' not found on line {$line}. Found codes: {$codes_found}",
 		);
+	}
+
+	protected function assert_sniff_ok( int $line, ?string $file_path = null ): void {
+
+		$phpcs_file = $this->create_phpcs_file( $file_path );
+		$errors = $phpcs_file->getErrors();
+
+		if ( array_key_exists( $line, $errors ) ) {
+
+			$codes = [];
+
+			foreach ( $errors[ $line ] as $col_errors ) {
+
+				foreach ( $col_errors as $error ) {
+					$codes[] = $error['source'];
+				}
+			}
+
+			$this->fail(
+				'Expected no error on line ' . $line . ', but got: ' . implode( ', ', $codes ),
+			);
+		}
+
+		$this->assertTrue( true ); // Explicit OK.
 	}
 
 	protected function assert_all_fixable( ?string $file_path = null ): void {

@@ -27,6 +27,12 @@ final class FunctionBodyEmptyLineBeforeSniffTest extends AbstractSniffTestCase {
 	}
 
 	#[Test]
+	public function does_not_report_function_with_blank_line(): void {
+
+		$this->assert_sniff_ok( 8 );
+	}
+
+	#[Test]
 	public function all_errors_are_fixable(): void {
 
 		$this->assert_all_fixable();

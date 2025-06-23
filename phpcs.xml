@@ -30,6 +30,10 @@
 		</properties>
 	</rule>
 
+	<rule ref="FundrikStandard.Classes.FinalClassMustBeReadonly">
+		<exclude-pattern>*.php</exclude-pattern>
+	</rule>
+
 	<rule ref="Squiz.Commenting.ClassComment.Missing">
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
@@ -42,12 +46,13 @@
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification">
-		<exclude-pattern>tests/*</exclude-pattern>
+	<rule ref="FundrikStandard.Commenting.SinceTagRequired">
+		<exclude-pattern>tests/*.php</exclude-pattern>
+		<exclude-pattern>tests/**/*.php</exclude-pattern>
 	</rule>
 
-	<rule ref="FundrikStandard.Classes.FinalClassMustBeReadonly">
-		<exclude-pattern>*.php</exclude-pattern>
+	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification">
+		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Complexity.Cognitive.ComplexityTooHigh">

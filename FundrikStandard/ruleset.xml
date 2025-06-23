@@ -10,6 +10,7 @@
 
 	<rule ref="FundrikStandard.Classes.FinalClassMustBeReadonly"/>
 	<rule ref="FundrikStandard.Classes.RequireAbstractOrFinal"/>
+	<rule ref="FundrikStandard.Commenting.SinceTagRequired"/>
 	<rule ref="FundrikStandard.Functions.FunctionBodyEmptyLineBefore"/>
 
 	<rule ref="SlevomatCodingStandard.Arrays.ArrayAccess"/>
