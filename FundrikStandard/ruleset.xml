@@ -241,7 +241,7 @@
 	<rule ref="PHPCompatibilityWP"/>
 
 	<rule ref="WordPress">
-		<!-- PSR4 autoload -->
+		<!-- Allow PSR4 filenames -->
 	    <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
 		<!-- Allow Windows end of line -->
@@ -258,29 +258,31 @@
 		<exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
 		<!-- Disable check for Yoda comparison -->
 		<exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+		<!-- Disable check for arrow (=>) alignment in associative arrays -->
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned"/>
 	</rule>
 
 	<rule ref="Generic.Formatting.MultipleStatementAlignment">
-		<exclude>true</exclude>
+		<!-- Disable all alignment checks for multiple statements (e.g., variable assignments, arrays) -->
+		<exclude name="Generic.Formatting.MultipleStatementAlignment"/>
 	</rule>
 
-	<rule ref="Generic.Formatting.MultipleStatementAlignment.NotSameWarning">
-		<severity>0</severity>
-	</rule>
-	
-	<rule ref="Squiz.Commenting.FunctionComment.SpacingAfterParamType">
-		<severity>0</severity>
-	</rule>
-
-	<rule ref="Squiz.Commenting.FunctionCommentThrowTag.Missing">
-		<severity>0</severity>
+	<rule ref="Squiz.Commenting.FunctionComment">
+		<!-- Disable formatting check: no extra space required after parameter type in @param doc comments -->
+		<exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
+		<!-- Disable requirement to document thrown exceptions with @throws -->
+		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing"/>
 	</rule>
 
-	<rule ref="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned">
-		<severity>0</severity>
+	<rule ref="Squiz.Commenting.VariableComment">
+		<!-- Disable requirement to document variables with @var tags -->
+		<exclude name="Squiz.Commenting.VariableComment.MissingVar"/>
 	</rule>
 
-	<rule ref="Squiz.Commenting.VariableComment.MissingVar">
-		<severity>0</severity>
+	<rule ref="PSR2.Classes.ClassDeclaration">
+		<!-- Disable check that requires 'implements' keyword to be on same line as class name -->
+		<exclude name="PSR2.Classes.ClassDeclaration.ImplementsLine"/>
+		<!-- Disable check that requires 'extends' keyword to be on same line as class name -->
+		<exclude name="PSR2.Classes.ClassDeclaration.ExtendsLine"/>
 	</rule>
 </ruleset>
