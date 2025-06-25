@@ -79,12 +79,11 @@
 
 			<property name="groups" type="array">
 				<element value="uses"/>
-				<element value="public constants, constants"/>
+				<element value="constants"/>
 				<element value="enum cases"/>
-				<element value="public properties, properties"/>
-				<element value="constructor, static constructors"/>
+				<element value="properties"/>
 				<element value="phpunit setup"/>
-				<element value="all public methods, methods"/>
+				<element value="methods"/>
 			</property>
 		</properties>
 	</rule>
