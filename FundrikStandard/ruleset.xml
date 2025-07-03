@@ -123,11 +123,9 @@
 	<rule ref="SlevomatCodingStandard.ControlStructures.DisallowTrailingMultiLineTernaryOperator"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.LanguageConstructWithParentheses"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.NewWithParentheses"/>
-	<rule ref="SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceEqualOperator"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullSafeObjectOperator"/>
-	<rule ref="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.RequireShortTernaryOperator"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator"/>
 	<rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison"/>
@@ -144,6 +142,18 @@
 		<properties>
 			<property name="lineLengthLimit" type="int" value="120"/>
 			<property name="minExpressionsLength" type="int" value="20"/>
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition">
+		<properties>
+			<property name="minLineLength" type="int" value="120"/>
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition">
+		<properties>
+			<property name="maxLineLength" type="int" value="119"/>
 		</properties>
 	</rule>
 
