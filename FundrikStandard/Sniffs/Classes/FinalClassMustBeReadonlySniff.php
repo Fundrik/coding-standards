@@ -22,7 +22,7 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 
 	// phpcs:disable WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 	/**
-	 * List of base classes that are excluded from readonly requirement.
+	 * List of base classes and interfaces that are excluded from readonly requirement.
 	 *
 	 * This should be set via ruleset.xml as a <property>.
 	 *
@@ -38,7 +38,7 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 	 * @var array<int, string>
 	 */
 	public array $excludedClasses = [];
-	// phpcs:enable WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
+	// phpcs:enable
 
 	/**
 	 * Returns the token types this sniff is interested in.
@@ -68,7 +68,6 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 
 		$tokens = $phpcs_file->getTokens();
 
-		// Get class name token and resolved FQCN of the current class.
 		$class_name_token = $phpcs_file->findNext( T_STRING, $stack_ptr );
 
 		if ( $class_name_token === false ) {
@@ -76,7 +75,6 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 		}
 
 		$full_class_name = $this->resolve_fully_qualified_name( $phpcs_file, $class_name_token );
-
 		$normalized_class_name = ltrim( $full_class_name, '\\' );
 
 		$normalized_excluded_classes = array_map(
@@ -85,34 +83,31 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 			$this->excludedClasses,
 		);
 
-		// Skip if class is in excludedClasses.
 		if ( in_array( $normalized_class_name, $normalized_excluded_classes, true ) ) {
 			return;
 		}
 
-		// Check for parent class.
-		// phpcs:ignore SlevomatCodingStandard.Functions.RequireSingleLineCall.RequiredSingleLineCall
-		$extends_ptr = $phpcs_file->findNext(
-			T_EXTENDS,
-			$stack_ptr,
-			$tokens[ $stack_ptr ]['scope_opener'] ?? null,
+		$excluded_normalized_parents = array_map(
+			static fn ( $c ) => ltrim( $c, '\\' ),
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$this->excludedParentClasses,
 		);
+
+		// === Check extends ===
+		$scope_end = $tokens[ $stack_ptr ]['scope_opener'] ?? null;
+		$extends_ptr = $phpcs_file->findNext( T_EXTENDS, $stack_ptr, $scope_end );
 
 		if ( $extends_ptr !== false ) {
 			$parent_class_token = $phpcs_file->findNext( T_STRING, $extends_ptr + 1 );
-			$parent_class_name = $parent_class_token !== false
-				? $tokens[ $parent_class_token ]['content']
-				: null;
 
-			if ( $parent_class_name !== null ) {
+			if ( $parent_class_token !== false ) {
 				$full_parent_name = $this->resolve_fully_qualified_name( $phpcs_file, $parent_class_token );
 
-				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				foreach ( $this->excludedParentClasses as $excluded_class ) {
+				foreach ( $excluded_normalized_parents as $excluded_class ) {
 
 					if (
-						$full_parent_name === ltrim( $excluded_class, '\\' )
-						|| is_subclass_of( $full_parent_name, ltrim( $excluded_class, '\\' ) )
+						$full_parent_name === $excluded_class
+						|| is_subclass_of( $full_parent_name, $excluded_class )
 					) {
 						return;
 					}
@@ -120,10 +115,44 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 			}
 		}
 
+		// === Check interfaces ===
+		$implements_ptr = $phpcs_file->findNext( T_IMPLEMENTS, $stack_ptr, $scope_end );
+
+		if ( $implements_ptr !== false ) {
+			$interface_ptr = $implements_ptr;
+
+			while ( true ) {
+				$interface_ptr = $phpcs_file->findNext( T_STRING, $interface_ptr + 1, $scope_end );
+
+				if ( $interface_ptr === false ) {
+					break;
+				}
+
+				$interface_name = $this->resolve_fully_qualified_name( $phpcs_file, $interface_ptr );
+
+				foreach ( $excluded_normalized_parents as $excluded_interface ) {
+
+					if (
+						$interface_name === $excluded_interface
+						|| is_subclass_of( $interface_name, $excluded_interface )
+					) {
+						return;
+					}
+				}
+
+				$next_token = $phpcs_file->findNext( [ T_COMMA, T_STRING ], $interface_ptr + 1, $scope_end );
+
+				if ( $next_token === false || $tokens[ $next_token ]['code'] !== T_COMMA ) {
+					break;
+				}
+
+				$interface_ptr = $next_token;
+			}
+		}
+
 		$is_final = false;
 		$is_readonly = false;
 
-		// Walk backward to find modifiers.
 		for ( $i = $stack_ptr - 1; $i >= 0; --$i ) {
 			$code = $tokens[ $i ]['code'];
 
@@ -144,12 +173,7 @@ final class FinalClassMustBeReadonlySniff implements Sniff {
 			return;
 		}
 
-		// phpcs:ignore SlevomatCodingStandard.Functions.RequireSingleLineCall.RequiredSingleLineCall
-		$phpcs_file->addError(
-			'Final class must also be declared readonly.',
-			$stack_ptr,
-			'FinalClassNotReadonly',
-		);
+		$phpcs_file->addError( 'Final class must also be declared readonly.', $stack_ptr, 'FinalClassNotReadonly' );
 	}
 }
-// phpcs:enable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint, SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
+// phpcs:enable

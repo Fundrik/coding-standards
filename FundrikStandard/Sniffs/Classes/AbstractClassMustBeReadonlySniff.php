@@ -152,4 +152,4 @@ final class AbstractClassMustBeReadonlySniff implements Sniff {
 		);
 	}
 }
-// phpcs:enable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint, SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
+// phpcs:enable

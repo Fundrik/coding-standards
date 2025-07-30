@@ -289,6 +289,11 @@
 		<exclude name="Squiz.Commenting.VariableComment.MissingVar"/>
 	</rule>
 
+	<rule ref="Squiz.Commenting.LongConditionClosingComment">
+		<!-- Disable requirement to add closing comment after long if/else/loop conditions -->
+		<exclude name="Squiz.Commenting.LongConditionClosingComment.Missing"/>
+	</rule>
+
 	<rule ref="PSR2.Classes.ClassDeclaration">
 		<!-- Disable check that requires 'implements' keyword to be on same line as class name -->
 		<exclude name="PSR2.Classes.ClassDeclaration.ImplementsLine"/>
